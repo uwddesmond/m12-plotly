@@ -1,0 +1,23 @@
+---
+output: html_document
+---
+
+Using the documentation on plotly's website I have created a choropleth map.  
+This map is created using information from their website on US agriculture exports by state.
+
+```{r, echo=FALSE, message=FALSE}
+library(plotly)
+df <- read.csv("https://raw.githubusercontent.com/plotly/datasets/master/2011_us_ag_exports.csv")
+df$hover <- with(df, paste(state, '<br>', "Beef", beef, "Dairy", dairy, "<br>",
+                           "Fruits", total.fruits, "Veggies", total.veggies,
+                           "<br>", "Wheat", wheat, "Corn", corn))
+g <- list(
+  scope = 'usa',
+  projection = list(type = 'albers usa')
+)
+
+plot_geo(df, locationmode = 'USA-states') %>%
+        add_trace(z = ~total.exports, text = ~hover, locations = ~code, color = ~total.exports, colors = 'Blues') %>%
+        colorbar(title = "Millions USD") %>%
+        layout(title="Example of Plotly Interactive Map", geo = g)
+```
